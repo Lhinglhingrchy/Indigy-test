@@ -1,10 +1,13 @@
 import express from "express";
 import { employee } from "./data.js";
+import bodyParser from "body-parser";
+import cors from "cors";
 
 const app = express();
 const port = 4000;
 let employeeData = employee;
 app.use(cors());
+app.use(bodyParser.json());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
