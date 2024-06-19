@@ -34,7 +34,7 @@ function App() {
         6
       )}-${phoneNumber.slice(6)}`;
     }
-    return phoneNumber; // Return as is if not 10 digits
+    return phoneNumber;
   };
 
   return (
@@ -49,11 +49,11 @@ function App() {
           <Table variant="simple">
             <Thead>
               <Tr>
-                <Th>รหัสพนักงาน</Th>
-                <Th>ชื่อ-นามสกุล</Th>
-                <Th>เบอร์โทร</Th>
-                <Th>ตำแหน่ง</Th>
-                <Th>ปุ่ม</Th>
+                <Th fontSize="md">รหัสพนักงาน</Th>
+                <Th fontSize="md">ชื่อ-นามสกุล</Th>
+                <Th fontSize="md">เบอร์โทร</Th>
+                <Th fontSize="md">ตำแหน่ง</Th>
+                <Th fontSize="md"></Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -67,7 +67,10 @@ function App() {
                     <Td>{formatPhoneNumber(item.phone)}</Td>
                     <Td>{item.position}</Td>
                     <Td>
-                      <DeleteButton data={item.id} set={setEmployeeData} />
+                      <div className="edit-delete-button">
+                        <EditButton data={item.id} set={setEmployeeData} />
+                        <DeleteButton data={item.id} set={setEmployeeData} />
+                      </div>
                     </Td>
                   </Tr>
                 );

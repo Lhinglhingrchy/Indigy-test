@@ -11,11 +11,6 @@ import {
   ModalCloseButton,
   Button,
   useDisclosure,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  FormHelperText,
-  Input,
 } from "@chakra-ui/react";
 import "./button.css";
 
@@ -26,6 +21,12 @@ function CreateButton(props) {
   const [surname, setSurname] = useState("");
   const [phone, setPhone] = useState("");
   const [position, setPosition] = useState("");
+
+  const [errorEmployeeId, setErrorEmployeeId] = useState("");
+  const [errorName, setErrorName] = useState("");
+  const [errorSurname, setErrorSurname] = useState("");
+  const [errorPhone, setErrorPhone] = useState("");
+  const [errorPosition, setErrorPosition] = useState("");
 
   const createEmployee = async () => {
     await axios.post("http://localhost:4000/employee", {
@@ -39,17 +40,60 @@ function CreateButton(props) {
     props.set(result.data.data);
     onClose();
   };
-  const handlesubmit = (event) => {
-    createEmployee();
-    setEmployeeId("");
-    setName("");
-    setSurname("");
-    setPhone("");
-    setPosition("");
+  const handlesubmit = () => {
+    if (employeeId === "") {
+      setErrorEmployeeId("กรุณากรอกรหัสพนักงาน");
+    } else if (employeeId.replace(/\D/g, "").length !== 6) {
+      setErrorEmployeeId("กรุณากรอกรหัสพนักงานให้ครบ 6 หลัก");
+    } else {
+      setErrorEmployeeId("");
+    }
+
+    if (name === "") {
+      setErrorName("กรุณากรอกชื่อ");
+    } else {
+      setErrorName("");
+    }
+
+    if (surname === "") {
+      setErrorSurname("กรุณากรอกนามสกุล");
+    } else {
+      setErrorSurname("");
+    }
+
+    const validPhone = /^0\d{9}$/;
+    if (phone === "") {
+      setErrorPhone("กรุณากรอกเบอร์โทรศัพท์");
+    } else if (!validPhone.test(phone)) {
+      setErrorPhone("กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง");
+    } else {
+      setErrorPhone("");
+    }
+
+    if (position === "") {
+      setErrorPosition("กรุณาเลือกตำแหน่ง");
+    } else {
+      setErrorPosition("");
+    }
+
+    if (
+      employeeId.length === 6 &&
+      name !== "" &&
+      surname !== "" &&
+      validPhone.test(phone) &&
+      position !== ""
+    ) {
+      createEmployee();
+      setEmployeeId("");
+      setName("");
+      setSurname("");
+      setPhone("");
+      setPosition("");
+    }
   };
 
   return (
-    <>
+    <div>
       <Button onClick={onOpen} colorScheme="green">
         เพิ่ม
       </Button>
@@ -57,7 +101,7 @@ function CreateButton(props) {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>เพิ่มรายชื่อพนักงาน</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <form>
@@ -71,15 +115,17 @@ function CreateButton(props) {
                   type="text"
                   placeholder="รหัสพนักงาน"
                   maxLength={6}
-                  value={employeeId}
+                  value={employeeId.replace(/\D/g, "")}
                   onChange={(event) => {
                     setEmployeeId(event.target.value);
                   }}
-                  // style={{
-                  //   border: errorFirstName ? "2px solid red" : "1px solid black",
-                  // }}
+                  style={{
+                    border: errorEmployeeId ? "2px solid red" : "1px solid ",
+                  }}
                 />
-                {/* {errorFirstName && <p style={{ color: "red" }}>{errorFirstName}</p>} */}
+                {errorEmployeeId && (
+                  <p style={{ color: "red" }}>{errorEmployeeId}</p>
+                )}
               </div>
 
               <div className="first-name">
@@ -95,11 +141,11 @@ function CreateButton(props) {
                   onChange={(event) => {
                     setName(event.target.value);
                   }}
-                  // style={{
-                  //   border: errorFirstName ? "2px solid red" : "1px solid black",
-                  // }}
+                  style={{
+                    border: errorName ? "2px solid red" : "1px solid",
+                  }}
                 />
-                {/* {errorFirstName && <p style={{ color: "red" }}>{errorFirstName}</p>} */}
+                {errorName && <p style={{ color: "red" }}>{errorName}</p>}
               </div>
 
               <div className="last-name">
@@ -115,11 +161,11 @@ function CreateButton(props) {
                   onChange={(event) => {
                     setSurname(event.target.value);
                   }}
-                  // style={{
-                  //   border: errorLastName ? "2px solid red" : "1px solid black",
-                  // }}
+                  style={{
+                    border: errorSurname ? "2px solid red" : "1px solid",
+                  }}
                 />
-                {/* {errorLastName && <p style={{ color: "red" }}>{errorLastName}</p>} */}
+                {errorSurname && <p style={{ color: "red" }}>{errorSurname}</p>}
               </div>
 
               <div className="phone-number">
@@ -132,38 +178,42 @@ function CreateButton(props) {
                   type="tel"
                   placeholder="เบอร์โทร"
                   maxLength={10}
-                  value={phone}
+                  value={phone.replace(/\D/g, "")}
                   onChange={(event) => {
-                    setPhone(event.target.value.replace(/\D/g, ""));
+                    setPhone(event.target.value);
                   }}
-                  // style={{
-                  //   border: errorPhoneNumber ? "2px solid red" : "1px solid black",
-                  // }}
+                  style={{
+                    border: errorPhone ? "2px solid red" : "1px solid",
+                  }}
                 />
-                {/* {errorPhoneNumber && (
-            <p style={{ color: "red" }}>{errorPhoneNumber}</p>
-          )} */}
+                {errorPhone && <p style={{ color: "red" }}>{errorPhone}</p>}
               </div>
-              <label htmlFor="position">
-                ตำแหน่ง<span>*</span>
-              </label>
-              <select
-                id="position"
-                name="position"
-                // set ช่อง category ให้สามารถเลือก category ได้
-                value={position}
-                onChange={(event) => {
-                  setPosition(event.target.value);
-                }}
-              >
-                <option>เลือกตำแหน่ง</option>
-                <option value="โปรแกรมเมอร์">โปรแกรมเมอร์</option>
-                <option value="ดีไซน์เนอร์">ดีไซน์เนอร์</option>
-                <option value="ผู้จัดการโครงการ">ผู้จัดการโครงการ</option>
-              </select>
+              <div>
+                <label htmlFor="position">
+                  ตำแหน่ง<span>*</span>
+                </label>
+                <select
+                  id="position"
+                  name="position"
+                  value={position}
+                  onChange={(event) => {
+                    setPosition(event.target.value);
+                  }}
+                  style={{
+                    border: errorPosition ? "2px solid red" : "1px solid",
+                  }}
+                >
+                  <option>เลือกตำแหน่ง</option>
+                  <option value="โปรแกรมเมอร์">โปรแกรมเมอร์</option>
+                  <option value="ดีไซน์เนอร์">ดีไซน์เนอร์</option>
+                  <option value="ผู้จัดการโครงการ">ผู้จัดการโครงการ</option>
+                </select>
+                {errorPosition && (
+                  <p style={{ color: "red" }}>{errorPosition}</p>
+                )}
+              </div>
             </form>
           </ModalBody>
-          {/* onClick={handlesubmit} */}
           <ModalFooter>
             <Button
               colorScheme="green"
@@ -180,7 +230,7 @@ function CreateButton(props) {
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </>
+    </div>
   );
 }
 export default CreateButton;

@@ -24,6 +24,20 @@ app.get(`/employee`, async (req, res) => {
   }
 });
 
+app.get(`/employee/:employeeId`, (req, res) => {
+  let employeeIdFromClient = Number(req.params.employeeId);
+  let found = employeeData.filter((item) => {
+    return item.id === employeeIdFromClient;
+  });
+  if (!found[0]) {
+    return res.json({ message: "Data not found" });
+  }
+  return res.json({
+    data: found[0],
+    message: "Complete Fetching assignments",
+  });
+});
+
 app.post(`/employee`, async (req, res) => {
   try {
     employeeData.push({
