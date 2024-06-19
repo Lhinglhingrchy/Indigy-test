@@ -11,6 +11,8 @@ import {
   Td,
   TableContainer,
 } from "@chakra-ui/react";
+import CreateButton from "./components/createButton.jsx";
+import EditButton from "./components/editButton.jsx";
 import DeleteButton from "./components/deleteButton.jsx";
 
 function App() {
@@ -39,7 +41,7 @@ function App() {
     <div className="container">
       <div className="topic">
         <h1>รายชื่อพนักงาน</h1>
-        <div className="create-button">button</div>
+        <CreateButton set={setEmployeeData} />
       </div>
 
       <div className="table-container">
